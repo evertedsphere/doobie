@@ -6,14 +6,13 @@ package doobie.mysql
 
 import doobie.Meta
 import doobie.enumerated.{JdbcType => JT}
-import doobie.util.meta.MetaConstructors
+import doobie.util.meta.MetaConstructors.Basic
 
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetDateTime
-import java.time.OffsetTime
 import java.time.ZoneOffset
 
 /**
@@ -21,13 +20,16 @@ import java.time.ZoneOffset
  *
  * Note that to ensure instants are preserved you may need to use one of the solutions described
  * in [[https://docs.oracle.com/cd/E17952_01/connector-j-8.0-en/connector-j-time-instants.html]].
+ *
+ * OffsetTime instance is not supported as there is no semantically equivalent
+ * type on the MySQL side.
  */
-trait JavaTimeInstances extends MetaConstructors {
+trait MysqlJavaTimeInstances {
 
   implicit val JavaTimeOffsetDateTimeMeta: Meta[OffsetDateTime] =
     Basic.oneObject(
       JT.TimestampWithTimezone,
-      List(JT.VarChar, JT.Date, JT.Time, JT.Timestamp),
+      Nil,
       classOf[OffsetDateTime]
     )
 
@@ -37,28 +39,22 @@ trait JavaTimeInstances extends MetaConstructors {
   implicit val JavaTimeLocalDateTimeMeta: Meta[LocalDateTime] =
     Basic.oneObject(
       JT.Timestamp,
-      List(JT.VarChar, JT.Date, JT.Time, JT.TimestampWithTimezone),
+      Nil,
       classOf[LocalDateTime]
     )
 
   implicit val JavaTimeLocalDateMeta: Meta[LocalDate] =
     Basic.oneObject(
       JT.Date,
-      List(JT.VarChar, JT.Time, JT.Timestamp, JT.TimestampWithTimezone),
+      Nil,
       classOf[LocalDate]
     )
 
   implicit val JavaTimeLocalTimeMeta: Meta[LocalTime] =
     Basic.oneObject(
       JT.Time,
-      List(JT.VarChar, JT.Date, JT.Timestamp, JT.TimestampWithTimezone),
+      Nil,
       classOf[LocalTime]
     )
 
-  implicit val JavaTimeOffsetTimeMeta: Meta[OffsetTime] =
-    Basic.oneObject(
-      JT.TimestampWithTimezone,
-      List(JT.VarChar, JT.Date, JT.Time, JT.Timestamp),
-      classOf[OffsetTime]
-    )
 }

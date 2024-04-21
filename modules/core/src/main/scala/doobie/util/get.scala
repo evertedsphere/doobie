@@ -31,6 +31,8 @@ sealed abstract class Get[A](
   val get: Coyoneda[(ResultSet, Int) => *, A],
 ) {
 
+  val allJdbcSources: NonEmptyList[JdbcType] = this.jdbcSources ++ this.jdbcSourceSecondary
+
   @SuppressWarnings(Array("org.wartremover.warts.Throw"))
   final def unsafeGetNonNullable(rs: ResultSet, n: Int): A = {
     val i = get.fi(rs, n)
